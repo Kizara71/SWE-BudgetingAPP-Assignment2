@@ -8,6 +8,10 @@ public class MainFrame extends JFrame {
     private DashboardView dashboardPanel;
     private TransactionView transactionPanel;
     private BudgetView budgetPanel;
+    private JPanel rootPanel;
+    private CardLayout rootCardLayout;
+    private JPanel appContainer;
+    private AuthView authView;
     private JPanel mainContentPanel;
     private CardLayout cardLayout;
 
@@ -17,6 +21,23 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        rootCardLayout = new CardLayout();
+        rootPanel = new JPanel(rootCardLayout);
+
+        authView = new AuthView();
+        
+        // Setup App Container (Sidebar + Content)
+        appContainer = new JPanel(new BorderLayout());
+        setupAppContainer();
+
+        rootPanel.add(authView, "Auth");
+        rootPanel.add(appContainer, "App");
+
+        getContentPane().add(rootPanel);
+        rootCardLayout.show(rootPanel, "Auth");
+    }
+
+    private void setupAppContainer() {
         // Sidebar for navigation
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
@@ -26,17 +47,21 @@ public class MainFrame extends JFrame {
         JButton btnDashboard = new JButton("Dashboard");
         JButton btnTransaction = new JButton("Transactions");
         JButton btnBudget = new JButton("Budgets");
+        JButton btnLogout = new JButton("Logout");
 
         // Make buttons stretch
         btnDashboard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnTransaction.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnBudget.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        btnLogout.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         sidebar.add(btnDashboard);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         sidebar.add(btnTransaction);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         sidebar.add(btnBudget);
+        sidebar.add(Box.createVerticalGlue());
+        sidebar.add(btnLogout);
 
         // Content area with CardLayout
         cardLayout = new CardLayout();
@@ -56,6 +81,12 @@ public class MainFrame extends JFrame {
 
         transactionPanel.addSaveListener(e -> {
             com.budgetapp.model.Transaction t = new com.budgetapp.model.Transaction();
+            // Set the logged in user ID to the transaction
+            com.budgetapp.model.User currentUser = com.budgetapp.model.SessionManager.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                t.setUserID(currentUser.getUserID());
+            }
+            
             t.setAmount(transactionPanel.getAmount());
             t.setCategoryName(transactionPanel.getCategory());
             t.setDescription(transactionPanel.getDescription());
@@ -63,6 +94,11 @@ public class MainFrame extends JFrame {
             t.setDateTime(transactionPanel.getDate());
             
             transController.add(t);
+            
+            if (currentUser != null) {
+                currentUser.updateBalance(t.getAmount(), t.isIncome());
+            }
+            
             transactionPanel.clearFields();
             JOptionPane.showMessageDialog(this, "Transaction Saved!");
             
@@ -72,18 +108,26 @@ public class MainFrame extends JFrame {
         
         dashboardPanel.addTransactionListener(e -> dashController.updateView());
 
-        // Initial Data Load
-        dashController.updateView();
-
         // Layout setup
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(sidebar, BorderLayout.WEST);
-        getContentPane().add(mainContentPanel, BorderLayout.CENTER);
+        appContainer.add(sidebar, BorderLayout.WEST);
+        appContainer.add(mainContentPanel, BorderLayout.CENTER);
 
         // Navigation Actions
-        btnDashboard.addActionListener(e -> switchPanel("Dashboard"));
+        btnDashboard.addActionListener(e -> { switchPanel("Dashboard"); dashController.updateView(); });
         btnTransaction.addActionListener(e -> switchPanel("Transaction"));
         btnBudget.addActionListener(e -> switchPanel("Budget"));
+        
+        btnLogout.addActionListener(e -> {
+            new com.budgetapp.controller.AuthController().logout();
+            rootCardLayout.show(rootPanel, "Auth");
+        });
+    }
+
+    public void onLoginSuccess() {
+        rootCardLayout.show(rootPanel, "App");
+        // refresh data for newly logged in user
+        com.budgetapp.controller.DashboardController dashController = new com.budgetapp.controller.DashboardController(dashboardPanel);
+        dashController.updateView();
     }
 
     public static MainFrame getInstance() {
@@ -101,6 +145,17 @@ public class MainFrame extends JFrame {
     public TransactionView getTransactionPanel() { return transactionPanel; }
     
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+            // Global font update
+            UIManager.put("defaultFont", new Font("Inter", Font.PLAIN, 14));
+            UIManager.put("Button.arc", 10);
+            UIManager.put("Component.arc", 10);
+            UIManager.put("ProgressBar.arc", 10);
+            UIManager.put("TextComponent.arc", 10);
+        } catch(Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
         SwingUtilities.invokeLater(() -> {
             MainFrame.getInstance().setVisible(true);
         });

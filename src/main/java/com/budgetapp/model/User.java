@@ -117,4 +117,28 @@ public class User implements IPersistable {
     public void setEmail(String email) { this.email = email; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public void setTotalBalance(double balance) { this.totalBalance = balance; }
+
+    public static User findByEmail(String email) {
+        Connection conn = DatabaseManager.getInstance().getConnection();
+        if (conn == null) return null;
+        
+        String sql = "SELECT * FROM users WHERE email=?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.userID = rs.getInt("id");
+                    user.name = rs.getString("name");
+                    user.email = rs.getString("email");
+                    user.passwordHash = rs.getString("passwordHash");
+                    user.totalBalance = rs.getDouble("totalBalance");
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding user by email: " + e.getMessage());
+        }
+        return null;
+    }
 }

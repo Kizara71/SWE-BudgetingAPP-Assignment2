@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import com.budgetapp.model.SessionManager;
 
 public class TransactionController extends BaseController {
     private String category;
@@ -21,12 +23,18 @@ public class TransactionController extends BaseController {
         List<Transaction> list = new ArrayList<>();
         Connection conn = DatabaseManager.getInstance().getConnection();
         if (conn == null) return list;
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT id FROM transactions ORDER BY date DESC")) {
-            while (rs.next()) {
-                Transaction t = new Transaction();
-                t.load(rs.getInt("id"));
-                list.add(t);
+        
+        com.budgetapp.model.User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return list; // User not logged in
+        
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT id FROM transactions WHERE userId=? ORDER BY date DESC")) {
+            pstmt.setInt(1, user.getUserID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Transaction t = new Transaction();
+                    t.load(rs.getInt("id"));
+                    list.add(t);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error fetching transactions: " + e.getMessage());
@@ -43,9 +51,15 @@ public class TransactionController extends BaseController {
         double total = 0;
         Connection conn = DatabaseManager.getInstance().getConnection();
         if (conn == null) return total;
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT SUM(amount) FROM transactions WHERE type='INCOME'")) {
-            if (rs.next()) total = rs.getDouble(1);
+        
+        com.budgetapp.model.User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return total;
+
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(amount) FROM transactions WHERE type='INCOME' AND userId=?")) {
+            pstmt.setInt(1, user.getUserID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) total = rs.getDouble(1);
+            }
         } catch (SQLException e) {}
         return total;
     }
@@ -54,9 +68,15 @@ public class TransactionController extends BaseController {
         double total = 0;
         Connection conn = DatabaseManager.getInstance().getConnection();
         if (conn == null) return total;
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT SUM(amount) FROM transactions WHERE type='EXPENSE'")) {
-            if (rs.next()) total = rs.getDouble(1);
+
+        com.budgetapp.model.User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return total;
+
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(amount) FROM transactions WHERE type='EXPENSE' AND userId=?")) {
+            pstmt.setInt(1, user.getUserID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) total = rs.getDouble(1);
+            }
         } catch (SQLException e) {}
         return total;
     }

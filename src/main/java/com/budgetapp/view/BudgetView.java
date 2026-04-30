@@ -10,7 +10,19 @@ public class BudgetView extends JPanel implements IBudgetView {
 
     public BudgetView() {
         progressBars = new HashMap<>();
-        btnSetLimit = new JButton();
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        JLabel lblTitle = new JLabel("Budgets");
+        lblTitle.setFont(new java.awt.Font("Inter", java.awt.Font.BOLD, 24));
+        add(lblTitle, BorderLayout.NORTH);
+        
+        JPanel centerPanel = new JPanel();
+        centerPanel.add(new JLabel("Budget tracking features coming soon..."));
+        add(centerPanel, BorderLayout.CENTER);
+        
+        btnSetLimit = new JButton("Set Limits");
+        add(btnSetLimit, BorderLayout.SOUTH);
     }
 
     @Override

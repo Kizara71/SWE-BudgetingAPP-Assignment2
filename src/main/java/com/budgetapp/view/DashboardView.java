@@ -17,27 +17,66 @@ public class DashboardView extends JPanel implements IDashboardView {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Top panel for balance
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        lblTotalBalance = new JLabel("Total Balance: $0.00");
-        lblTotalBalance.setFont(new Font("Arial", Font.BOLD, 24));
-        btnRefresh = new JButton("Refresh");
-        topPanel.add(lblTotalBalance);
-        topPanel.add(Box.createHorizontalStrut(20));
-        topPanel.add(btnRefresh);
-        add(topPanel, BorderLayout.NORTH);
+        // Top panel for balance (Card style)
+        JPanel balanceCard = new JPanel();
+        balanceCard.setLayout(new BoxLayout(balanceCard, BoxLayout.Y_AXIS));
+        balanceCard.setBackground(Color.decode("#3b82f6")); // primary blue
+        balanceCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.decode("#2563eb"), 1, true),
+            BorderFactory.createEmptyBorder(25, 25, 25, 25)
+        ));
+
+        JLabel lblTitle = new JLabel("Total Balance");
+        lblTitle.setForeground(new Color(255, 255, 255, 200)); // semi-transparent white
+        lblTitle.setFont(new Font("Inter", Font.PLAIN, 16));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        lblTotalBalance = new JLabel("$0.00");
+        lblTotalBalance.setForeground(Color.WHITE);
+        lblTotalBalance.setFont(new Font("Inter", Font.BOLD, 42));
+        lblTotalBalance.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        balanceCard.add(lblTitle);
+        balanceCard.add(Box.createVerticalStrut(10));
+        balanceCard.add(lblTotalBalance);
+
+        // Header Panel for Card + Button
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.add(balanceCard, BorderLayout.CENTER);
+        
+        btnRefresh = new JButton("Refresh Data");
+        btnRefresh.putClientProperty("JButton.buttonType", "roundRect");
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnPanel.add(btnRefresh);
+        headerPanel.add(btnPanel, BorderLayout.SOUTH);
+        
+        add(headerPanel, BorderLayout.NORTH);
 
         // Center panel for table
         String[] columns = {"ID", "Date", "Category", "Description", "Type", "Amount"};
         tableModel = new DefaultTableModel(columns, 0);
         tblRecentTransactions = new JTable(tableModel);
+        tblRecentTransactions.setRowHeight(35); // taller rows for modern look
+        tblRecentTransactions.getTableHeader().setFont(new Font("Inter", Font.BOLD, 14));
+        
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        tableContainer.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        
+        JLabel lblRecent = new JLabel("Recent Transactions");
+        lblRecent.setFont(new Font("Inter", Font.BOLD, 18));
+        lblRecent.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        tableContainer.add(lblRecent, BorderLayout.NORTH);
+        
         JScrollPane scrollPane = new JScrollPane(tblRecentTransactions);
-        add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // remove scrollpane border
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        
+        add(tableContainer, BorderLayout.CENTER);
     }
 
     @Override
     public void setBalance(double balance) {
-        lblTotalBalance.setText(String.format("Total Balance: $%.2f", balance));
+        lblTotalBalance.setText(String.format("$%.2f", balance));
     }
 
     @Override

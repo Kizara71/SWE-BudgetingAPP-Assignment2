@@ -32,10 +32,21 @@ public class TransactionView extends JPanel implements ITransactionView {
     }
 
     public TransactionView() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new GridBagLayout()); // Use GridBagLayout to center the card
+        
+        JPanel cardPanel = new JPanel(new BorderLayout(0, 20));
+        cardPanel.setPreferredSize(new Dimension(450, 400));
+        cardPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1, true),
+            BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+        
+        JLabel lblTitle = new JLabel("Add New Transaction");
+        lblTitle.setFont(new Font("Inter", Font.BOLD, 22));
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        cardPanel.add(lblTitle, BorderLayout.NORTH);
 
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 15));
 
         formPanel.add(new JLabel("Amount:"));
         txtAmount = new JTextField();
@@ -65,10 +76,15 @@ public class TransactionView extends JPanel implements ITransactionView {
 
         formPanel.add(new JLabel("")); // spacer
         btnSave = new JButton("Save Transaction");
+        btnSave.putClientProperty("JButton.buttonType", "roundRect");
+        btnSave.setBackground(Color.decode("#3b82f6"));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.setFont(new Font("Inter", Font.BOLD, 14));
         formPanel.add(btnSave);
 
-        add(new JLabel("<html><h2>Add New Transaction</h2></html>", SwingConstants.CENTER), BorderLayout.NORTH);
-        add(formPanel, BorderLayout.CENTER);
+        cardPanel.add(formPanel, BorderLayout.CENTER);
+        
+        add(cardPanel);
     }
 
     @Override
