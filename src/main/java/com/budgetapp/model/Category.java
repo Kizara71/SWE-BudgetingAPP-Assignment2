@@ -9,6 +9,7 @@ public class Category implements IPersistable {
     public boolean canDelete() { return false; }
     public boolean isCustom() { return isCustom; }
     public int getTransactionCount() { return 0; }
+    public String getName() { return name; }
 
     @Override
     public void save() {}
