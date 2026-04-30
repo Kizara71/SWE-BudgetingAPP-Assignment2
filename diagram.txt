@@ -1,0 +1,311 @@
+classDiagram
+    %% View Package
+    namespace View_Package {
+        class MainFrame {
+            <<Singleton>>
+            -static instance : MainFrame
+            -dashboardPanel : DashboardView
+            -transactionPanel : TransactionView
+            -budgetPanel : BudgetView
+            +static getInstance() MainFrame
+            +switchPanel(String panelName)
+        }
+
+        class IDashboardView {
+            <<interface>>
+            +setBalance(double balance)
+            +updateTransactionTable(List data)
+            +addTransactionListener(ActionListener l)
+        }
+
+        class ITransactionView {
+            <<interface>>
+            +getAmount() double
+            +getCategory() String
+            +addSaveListener(ActionListener l)
+            +clearFields()
+        }
+
+        class IBudgetView {
+            <<interface>>
+            +updateProgress(String category, double percent)
+            +showWarning(String msg)
+        }
+
+        class DashboardView {
+            -JLabel lblTotalBalance
+            -JTable tblRecentTransactions
+            -JButton btnAddNewTransaction
+            +setBalance(double balance)
+            +updateTransactionTable(List data)
+            +addTransactionListener(ActionListener l)
+        }
+
+        class TransactionView {
+            -JTextField txtAmount
+            -JComboBox cmbCategory
+            -JDatePicker datePicker
+            -JButton btnSave
+            +getAmount() double
+            +getCategory() String
+            +addSaveListener(ActionListener l)
+            +clearFields()
+        }
+
+        class BudgetView {
+            -Map progressBars
+            -JButton btnSetLimit
+            +updateProgress(String category, double percent)
+            +showWarning(String msg)
+        }
+    }
+
+    %% Controller Package
+    namespace Controller_Package {
+        class BaseController {
+            <<abstract>>
+            -int CurrentUserID
+            -bool IsAuthenticated
+            -string ErrorMSG
+            -int SessionTimeout
+            +GetCurrentUserID() int
+            +CheckAuth() bool
+            +HandleError(string msg) void
+        }
+
+        class AuthController {
+            -string AuthToken
+            -bool FailedAttempts
+            +Register(name, email, password) bool
+            +Login(email, password) bool
+            +Logout() void
+            +Validation() bool
+        }
+
+        class TransactionController {
+            -string Category
+            +Add(t) void
+            +Get() int
+            +Delete() void
+            +FilterByCategory(c) List~Transaction~
+            +FilterByDate(d) List~Transaction~
+            +GetIncome() int
+            +GetExpense() int
+        }
+
+        class BudgetController {
+            -int SpentAmount
+            -int AlertThreshold
+            -CalcSpent(id) void
+            +Create(b) void
+            +Edit(id, b) void
+            +GetBudget() int
+            +GetRemaining() int
+            +CheckStatus() bool
+            +TriggerAlert(id) void
+        }
+
+        class GoalController {
+            -int ProgressTracker
+            +Create(g) void
+            +updateGoal(Id, amount)
+            +updateProgress(currentAmount, status)
+            +Delete(id) void
+            +GetGoal() string
+            +GetProgress() float
+            +CheckCompletion() bool
+            +calcMonthlySavings(targetAmount, deadline, currentAmount)
+        }
+
+        class NotifController {
+            -int UnreadCount
+            -List~Notification~ NotifList
+            -Date LastSent
+            +Send(msg, type) String
+            +GetAll() List~Notification~
+            +MarkAsRead(id) void
+            +GetUnreadCount() int
+            +Clear() void
+        }
+
+        class DashboardController {
+            -IDashboardView view
+            +updateView()
+        }
+    }
+
+    %% Model Package
+    namespace Model_Package {
+        class IPersistable {
+            <<interface>>
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class User {
+            -int userID
+            -String name
+            -String email
+            -String passwordHash
+            -double totalBalance
+            -String preferredCurrency
+            -String appLanguage
+            +updateBalance(double amount, boolean isIncome) void
+            +validatePassword(String rawPassword) boolean
+            +updateProfile(String name, String email) boolean
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class Transaction {
+            -int transactionID
+            -int userID
+            -double amount
+            -Category category
+            -String description
+            -Date dateTime
+            -String paymentMethod
+            +isIncome() boolean
+            +validateAmount() boolean
+            +getFormattedDate() String
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class Budget {
+            -int budgetID
+            -int userID
+            -Category category
+            -double budgetAmount
+            -double spentAmount
+            -Date startDate
+            -Date endDate
+            -int alertThreshold
+            +calcRemaining() double
+            +calcSpentPercentage() double
+            +getStatus() String
+            +addSpending(double amount) void
+            +checkThresholds() boolean
+            +isOverLimit() boolean
+            +resetPeriod() void
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class Goal {
+            -int goalID
+            -int userID
+            -String goalName
+            -double targetAmount
+            -double currentAmount
+            -Date deadline
+            -String status
+            +calcProgress() double
+            +calcMonthlySavings() double
+            +addContribution(double amount) void
+            +isCompleted() boolean
+            +checkGoalStatus() String
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class Category {
+            -int categoryID
+            -int userID
+            -String name
+            -boolean isCustom
+            +canDelete() boolean
+            +isCustom() boolean
+            +getTransactionCount() int
+            +save() void
+            +load(int id) void
+            +delete() bool
+        }
+
+        class Notification {
+            -int notificationID
+            -int userID
+            -String type
+            -String message
+            -boolean isRead
+            -Date timestamp
+            +markAsRead() void
+        }
+
+        class Income {
+            -String source
+            +isIncome() boolean
+            +applyToGoal(int goalID) void
+        }
+
+        class Expense {
+            -String paymentMethod
+            +isIncome() boolean
+            +checkAgainstBudget() boolean
+        }
+    }
+
+    %% Persistence Layer
+    class DatabaseManager {
+        <<Singleton>>
+        -DatabaseManager instance
+        +static getInstance() DatabaseManager
+        +FindUserByEmail(email) bool
+        +connect() void
+        +disconnect() void
+        +executeQuery(query) void
+        +save(IPersistable item) boolean
+        +load(IPersistable item)
+        +delete(IPersistable item) boolean
+    }
+
+    %% Inheritances & Implementations
+    BaseController <|-- AuthController
+    BaseController <|-- TransactionController
+    BaseController <|-- BudgetController
+    BaseController <|-- GoalController
+    BaseController <|-- NotifController
+    
+    IPersistable <|.. User
+    IPersistable <|.. Transaction
+    IPersistable <|.. Budget
+    IPersistable <|.. Goal
+    IPersistable <|.. Category
+    
+    Transaction <|-- Income
+    Transaction <|-- Expense
+    
+    IDashboardView <|.. DashboardView
+    ITransactionView <|.. TransactionView
+    IBudgetView <|.. BudgetView
+
+    %% Component Ownership (MainFrame)
+    MainFrame *-- DashboardView
+    MainFrame *-- TransactionView
+    MainFrame *-- BudgetView
+
+    %% Relationships & Events
+    DashboardView ..> IDashboardView : realizes
+    TransactionView ..> ITransactionView : realizes
+    BudgetView ..> IBudgetView : realizes
+    
+    DashboardView ..> TransactionController : fires event
+    TransactionView ..> TransactionController : fires event
+    DashboardController ..> IDashboardView : uses
+    
+    TransactionController ..> Transaction : uses
+    BudgetController ..> Budget : uses
+    GoalController ..> Goal : uses
+    AuthController ..> User : uses
+    NotifController ..> Notification : uses
+    
+    Transaction ..> TransactionController : fires event
+    Budget ..> BudgetController : fires event
+    Goal ..> GoalController : fires event
+    
+    DatabaseManager ..> IPersistable : uses

@@ -1,0 +1,21 @@
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# IDE specific
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+.vscode/
+
+# Database files
+*.db
+*.sqlite
