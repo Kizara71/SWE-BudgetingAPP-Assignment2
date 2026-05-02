@@ -1,6 +1,7 @@
 package com.budgetapp.view;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Map;
 import java.util.HashMap;
 
