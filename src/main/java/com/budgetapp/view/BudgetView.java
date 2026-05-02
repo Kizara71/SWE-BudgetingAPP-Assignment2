@@ -11,6 +11,17 @@ public class BudgetView extends JPanel {
     private JSpinner spinAlertThreshold;
     private JButton btnSaveBudget;
     private JPanel progressPanel;
+    
+    public interface BudgetActionListener {
+        void onEdit(Budget b);
+        void onDelete(Budget b);
+    }
+    
+    private BudgetActionListener actionListener;
+
+    public void setBudgetActionListener(BudgetActionListener listener) {
+        this.actionListener = listener;
+    }
 
     public BudgetView() {
         setLayout(new BorderLayout(10, 10));
@@ -81,7 +92,24 @@ public class BudgetView extends JPanel {
                 progressBar.setForeground(new Color(0, 150, 0)); // Green
             }
             
+            
+            JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            JButton btnEdit = new JButton("Edit");
+            JButton btnDelete = new JButton("Delete");
+            
+            btnEdit.addActionListener(e -> {
+                if (actionListener != null) actionListener.onEdit(b);
+            });
+            
+            btnDelete.addActionListener(e -> {
+                if (actionListener != null) actionListener.onDelete(b);
+            });
+            
+            actionPanel.add(btnEdit);
+            actionPanel.add(btnDelete);
+            
             itemPanel.add(progressBar, BorderLayout.CENTER);
+            itemPanel.add(actionPanel, BorderLayout.SOUTH);
             progressPanel.add(itemPanel);
         }
         progressPanel.revalidate();

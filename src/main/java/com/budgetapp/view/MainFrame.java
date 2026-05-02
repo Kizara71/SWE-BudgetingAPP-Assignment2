@@ -97,6 +97,51 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Budget Saved Successfully!");
         });
 
+        budgetPanel.setBudgetActionListener(new com.budgetapp.view.BudgetView.BudgetActionListener() {
+            @Override
+            public void onEdit(com.budgetapp.model.Budget b) {
+                JPanel editPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+                JTextField txtEditAmount = new JTextField(String.valueOf(b.getBudgetAmount()));
+                JSpinner spinEditAlert = new JSpinner(new SpinnerNumberModel(b.getAlertThreshold(), 1, 100, 5));
+                
+                editPanel.add(new JLabel("Amount:"));
+                editPanel.add(txtEditAmount);
+                editPanel.add(new JLabel("Alert Threshold (%):"));
+                editPanel.add(spinEditAlert);
+
+                int result = JOptionPane.showConfirmDialog(MainFrame.this, editPanel, 
+                         "Edit Budget: " + b.getCategoryName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        double newAmount = Double.parseDouble(txtEditAmount.getText());
+                        if (newAmount > 0) {
+                            b.setBudgetAmount(newAmount);
+                            b.setAlertThreshold((Integer) spinEditAlert.getValue());
+                            budgetController.save(b);
+                            budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets());
+                            JOptionPane.showMessageDialog(MainFrame.this, "Budget Updated!");
+                        } else {
+                            JOptionPane.showMessageDialog(MainFrame.this, "Invalid amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(MainFrame.this, "Invalid amount format.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+
+            @Override
+            public void onDelete(com.budgetapp.model.Budget b) {
+                int result = JOptionPane.showConfirmDialog(MainFrame.this, 
+                        "Are you sure you want to delete the budget for " + b.getCategoryName() + "?", 
+                        "Delete Budget", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (result == JOptionPane.YES_OPTION) {
+                    budgetController.delete(b.getBudgetID());
+                    budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets());
+                }
+            }
+        });
+
         transactionPanel.addSaveListener(e -> {
             com.budgetapp.model.Transaction t = new com.budgetapp.model.Transaction();
             // Set the logged in user ID to the transaction
