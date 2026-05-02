@@ -1,9 +1,3 @@
-target/
-*.class
-*.jar
-*.war
-*.ear
-*.nar
 *.zip
 *.tar.gz
 *.rar
@@ -19,3 +13,5 @@ target/
 # Database files
 *.db
 *.sqlite
+
+.vs/

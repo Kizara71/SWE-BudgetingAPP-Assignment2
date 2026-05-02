@@ -78,6 +78,24 @@ public class MainFrame extends JFrame {
         // Controller Wiring
         com.budgetapp.controller.DashboardController dashController = new com.budgetapp.controller.DashboardController(dashboardPanel);
         com.budgetapp.controller.TransactionController transController = new com.budgetapp.controller.TransactionController();
+        com.budgetapp.controller.BudgetController budgetController = new com.budgetapp.controller.BudgetController();
+
+        budgetPanel.addSaveBudgetListener(e -> {
+            com.budgetapp.model.Budget b = new com.budgetapp.model.Budget();
+            b.setCategoryName(budgetPanel.getCategory());
+            b.setBudgetAmount(budgetPanel.getAmount());
+            b.setAlertThreshold(budgetPanel.getAlertThreshold());
+            
+            if (b.getBudgetAmount() <= 0) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid budget amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            budgetController.save(b);
+            budgetPanel.clearFields();
+            budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets());
+            JOptionPane.showMessageDialog(this, "Budget Saved Successfully!");
+        });
 
         transactionPanel.addSaveListener(e -> {
             com.budgetapp.model.Transaction t = new com.budgetapp.model.Transaction();
@@ -115,7 +133,10 @@ public class MainFrame extends JFrame {
         // Navigation Actions
         btnDashboard.addActionListener(e -> { switchPanel("Dashboard"); dashController.updateView(); });
         btnTransaction.addActionListener(e -> switchPanel("Transaction"));
-        btnBudget.addActionListener(e -> switchPanel("Budget"));
+        btnBudget.addActionListener(e -> { 
+            switchPanel("Budget"); 
+            budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets()); 
+        });
         
         btnLogout.addActionListener(e -> {
             new com.budgetapp.controller.AuthController().logout();

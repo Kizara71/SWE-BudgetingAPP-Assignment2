@@ -56,9 +56,21 @@ public class DatabaseManager {
                 "FOREIGN KEY(userId) REFERENCES users(id)" +
                 ");";
 
+        String createBudgetTable = "CREATE TABLE IF NOT EXISTS budgets (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "userId INTEGER," +
+                "category TEXT," +
+                "amount REAL," +
+                "startDate INTEGER," +
+                "endDate INTEGER," +
+                "alertThreshold INTEGER," +
+                "FOREIGN KEY(userId) REFERENCES users(id)" +
+                ");";
+
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createUserTable);
             stmt.execute(createTransactionTable);
+            stmt.execute(createBudgetTable);
         } catch (SQLException e) {
             System.err.println("Failed to initialize tables: " + e.getMessage());
         }

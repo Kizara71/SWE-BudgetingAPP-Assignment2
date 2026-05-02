@@ -80,4 +80,23 @@ public class TransactionController extends BaseController {
         } catch (SQLException e) {}
         return total;
     }
+    public double getExpenseByCategory(String category) { 
+        double total = 0;
+        Connection conn = DatabaseManager.getInstance().getConnection();
+        if (conn == null) return total;
+
+        com.budgetapp.model.User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return total;
+
+        try (PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(amount) FROM transactions WHERE type='EXPENSE' AND userId=? AND category=?")) {
+            pstmt.setInt(1, user.getUserID());
+            pstmt.setString(2, category);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) total = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching expense by category: " + e.getMessage());
+        }
+        return total;
+    }
 }
