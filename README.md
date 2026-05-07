@@ -58,25 +58,52 @@ SWE - Budgeting App/
 ├── src/main/java/com/budgetapp/
 │   ├── controller/          # Business logic & flow control
 │   │   ├── AuthController.java
+│   │   ├── BaseController.java
 │   │   ├── BudgetController.java
 │   │   ├── DashboardController.java
-│   │   └── ...
+│   │   ├── GoalController.java
+│   │   ├── NotifController.java
+│   │   ├── ProfileController.java
+│   │   └── TransactionController.java
 │   ├── model/               # Data structures & Entities
 │   │   ├── Budget.java
 │   │   ├── Category.java
+│   │   ├── Expense.java
+│   │   ├── Goal.java
+│   │   ├── Income.java
+│   │   ├── IPersistable.java
+│   │   ├── Notification.java
+│   │   ├── SessionManager.java
 │   │   ├── Transaction.java
-│   │   ├── User.java
-│   │   └── ...
+│   │   └── User.java
 │   ├── persistence/         # Database Access
 │   │   └── DatabaseManager.java
 │   └── view/                # UI Components (Java Swing)
-│       ├── MainFrame.java
+│       ├── AuthView.java
+│       ├── BudgetView.java
 │       ├── DashboardView.java
-│       ├── TransactionView.java
-│       └── ...
-├── pom.xml                  # Maven dependencies & config
+│       ├── GoalView.java
+│       ├── IBudgetView.java
+│       ├── IDashboardView.java
+│       ├── ITransactionView.java
+│       ├── MainFrame.java
+│       ├── ProfileView.java
+│       ├── ReportsView.java
+│       └── TransactionView.java
+├── .gitignore               # Git ignored files
 ├── budgetapp.db             # Generated SQLite database
-└── README.md                # Project documentation
+├── diagram.txt              # Project UML structural diagram
+├── pom.xml                  # Maven dependencies & config
+├── README.md                # Project documentation
+├── Sequance Diagram 1.txt   # System sequence diagram 1
+├── Sequance Diagram 2.txt   # System sequence diagram 2
+├── Sequance Diagram 3.txt   # System sequence diagram 3
+├── Sequance Diagram 4.txt   # System sequence diagram 4
+├── Sequance Diagram 5.txt   # System sequence diagram 5
+├── Sequance Diagram 6.txt   # System sequence diagram 6
+├── Sequance Diagram 7.txt   # System sequence diagram 7
+├── Sequance Diagram 8.txt   # System sequence diagram 8
+└── State Diagram.txt        # Application state diagram
 ```
 
 ---
