@@ -1,11 +1,15 @@
 package com.budgetapp.persistence;
 
-import com.budgetapp.model.IPersistable;
+import com.budgetapp.model.interfaces.IPersistable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Manages the SQLite database connection and initialization.
+ * Implements the Singleton design pattern.
+ */
 public class DatabaseManager {
     private static DatabaseManager instance;
     private Connection connection;
@@ -15,6 +19,11 @@ public class DatabaseManager {
         initTables();
     }
 
+    /**
+     * Retrieves the singleton instance of the DatabaseManager.
+     * 
+     * @return the DatabaseManager instance
+     */
     public static DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -22,6 +31,10 @@ public class DatabaseManager {
         return instance;
     }
 
+    /**
+     * Establishes a connection to the local SQLite database file.
+     * Creates the file if it does not exist.
+     */
     public void connect() {
         try {
             // Load the SQLite JDBC driver
@@ -34,6 +47,9 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Initializes the necessary database tables if they do not already exist.
+     */
     private void initTables() {
         if (connection == null) return;
         
@@ -99,6 +115,9 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Closes the active database connection safely.
+     */
     public void disconnect() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -110,13 +129,45 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Gets the active database connection object.
+     * 
+     * @return the SQL Connection
+     */
     public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Placeholder method to find a user by email.
+     * @param email the email to search for
+     * @return always returns false
+     */
     public boolean FindUserByEmail(String email) { return false; }
+    
+    /**
+     * Placeholder method to execute an arbitrary query.
+     * @param query the SQL query string
+     */
     public void executeQuery(String query) {}
+    
+    /**
+     * Placeholder method to save a persistable item.
+     * @param item the item to save
+     * @return always returns false
+     */
     public boolean save(IPersistable item) { return false; }
+    
+    /**
+     * Placeholder method to load a persistable item.
+     * @param item the item to load
+     */
     public void load(IPersistable item) {}
+    
+    /**
+     * Placeholder method to delete a persistable item.
+     * @param item the item to delete
+     * @return always returns false
+     */
     public boolean delete(IPersistable item) { return false; }
 }

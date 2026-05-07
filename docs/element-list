@@ -1,0 +1,8 @@
+com.budgetapp.controller.core
+com.budgetapp.controller.features
+com.budgetapp.model.entity
+com.budgetapp.model.interfaces
+com.budgetapp.model.session
+com.budgetapp.persistence
+com.budgetapp.view.interfaces
+com.budgetapp.view.ui
