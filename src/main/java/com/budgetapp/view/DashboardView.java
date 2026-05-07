@@ -11,7 +11,6 @@ public class DashboardView extends JPanel implements IDashboardView {
     private JLabel lblTotalBalance;
     private JTable tblRecentTransactions;
     private DefaultTableModel tableModel;
-    private JButton btnRefresh;
 
     public DashboardView() {
         setLayout(new BorderLayout(10, 10));
@@ -44,11 +43,7 @@ public class DashboardView extends JPanel implements IDashboardView {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.add(balanceCard, BorderLayout.CENTER);
         
-        btnRefresh = new JButton("Refresh Data");
-        btnRefresh.putClientProperty("JButton.buttonType", "roundRect");
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnPanel.add(btnRefresh);
-        headerPanel.add(btnPanel, BorderLayout.SOUTH);
+        // No btnRefresh anymore
         
         add(headerPanel, BorderLayout.NORTH);
 
@@ -99,6 +94,6 @@ public class DashboardView extends JPanel implements IDashboardView {
 
     @Override
     public void addTransactionListener(ActionListener l) {
-        btnRefresh.addActionListener(l);
+        // Obsolete, data refreshes automatically on tab switch
     }
 }

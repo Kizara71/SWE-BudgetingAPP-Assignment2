@@ -220,6 +220,40 @@ public class MainFrame extends JFrame {
                 }
             }
             
+            // Update goals based on transaction
+            double amountToApply = t.getAmount();
+            for (com.budgetapp.model.Goal g : goalController.getAll()) {
+                if (amountToApply <= 0) break;
+                
+                if (t.isIncome()) {
+                    if (!g.isCompleted()) {
+                        double needed = g.getTargetAmount() - g.getCurrentAmount();
+                        if (amountToApply <= needed) {
+                            g.addContribution(amountToApply);
+                            amountToApply = 0;
+                        } else {
+                            g.addContribution(needed);
+                            amountToApply -= needed;
+                        }
+                    }
+                } else {
+                    if (g.getCurrentAmount() > 0) {
+                        double available = g.getCurrentAmount();
+                        if (amountToApply <= available) {
+                            g.setCurrentAmount(g.getCurrentAmount() - amountToApply);
+                            g.setStatus("IN_PROGRESS");
+                            g.save();
+                            amountToApply = 0;
+                        } else {
+                            g.setCurrentAmount(0);
+                            g.setStatus("IN_PROGRESS");
+                            g.save();
+                            amountToApply -= available;
+                        }
+                    }
+                }
+            }
+            
             transactionPanel.clearFields();
             JOptionPane.showMessageDialog(this, "Transaction Saved!");
             

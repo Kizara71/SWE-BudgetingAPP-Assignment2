@@ -36,11 +36,11 @@ public class ProfileView extends JPanel {
         settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
 
         settingsPanel.add(new JLabel("Currency:"));
-        cmbCurrency = new JComboBox<>(new String[]{"USD", "EUR", "GBP", "JPY"});
+        cmbCurrency = new JComboBox<>(new String[]{"USD"});
         settingsPanel.add(cmbCurrency);
 
         settingsPanel.add(new JLabel("Language:"));
-        cmbLanguage = new JComboBox<>(new String[]{"English", "Spanish", "French"});
+        cmbLanguage = new JComboBox<>(new String[]{"English"});
         settingsPanel.add(cmbLanguage);
 
         settingsPanel.add(new JLabel("Appearance:"));
@@ -77,6 +77,19 @@ public class ProfileView extends JPanel {
 
         boolean success = controller.saveSettings(user.getUserID(), settings);
         if (success) {
+            try {
+                if ("Dark".equals(settings.get("appearance"))) {
+                    UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+                } else {
+                    UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+                }
+                Window window = SwingUtilities.getWindowAncestor(this);
+                if (window != null) {
+                    SwingUtilities.updateComponentTreeUI(window);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             JOptionPane.showMessageDialog(this, "Profile Settings Saved Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, controller.getErrorMSG() != null ? controller.getErrorMSG() : "Failed to save settings.", "Error", JOptionPane.ERROR_MESSAGE);
