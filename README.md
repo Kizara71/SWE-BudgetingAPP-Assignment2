@@ -1,60 +1,113 @@
-Budgeting App - Project Overview
+# 💰 Java Budgeting Application
 
-1. Tools and Technologies Used
-------------------------------
-This project was developed using the following tools and libraries:
-* Java (JDK 17): The core programming language used to build the application logic and UI.
-* Maven: Dependency management and build automation tool (configuration in `pom.xml`).
-* Java Swing: The native Java GUI toolkit used to build the desktop interface.
-* SQLite (JDBC Driver v3.45.1.0): A lightweight, file-based relational database used for local data persistence.
-* FlatLaf (v3.4): A modern, custom look-and-feel library used to provide a clean, modern, dark-themed UI over standard Java Swing components.
-* JDatePicker (v1.3.4): A custom UI component library used to provide user-friendly date-picker dropdowns for transactions and budgets.
+A comprehensive desktop application for tracking personal finances, managing budgets, and achieving financial goals. Built with Java Swing and an SQLite database, featuring a modern dark-themed UI.
 
-2. Files and Architecture Included
-----------------------------------
-The application follows the Model-View-Controller (MVC) architectural pattern.
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
 
-[Project Root Files]
-* pom.xml: The Maven build file defining dependencies and compiler settings.
-* budgetapp.db: The local SQLite database file that stores user accounts, transactions, budgets, and goals.
-* .gitignore: Instructs Git on which files/directories (like /target/) to ignore.
-* Sequance Diagram 1.txt - 8.txt: Textual representations of system sequence diagrams detailing control flow.
-* State Diagram.txt: Textual representation of the system's state transitions.
-* diagram.txt: UML or general structural documentation.
+---
 
-[Source Code: src/main/java/com/budgetapp/]
+## ✨ Features
 
-Model Layer (Business Logic & Entities)
-* User.java: Represents user accounts and authentication credentials.
-* Transaction.java: Base abstract class for financial records.
-* Income.java / Expense.java: Concrete classes extending Transaction to represent incoming/outgoing funds.
-* Budget.java: Represents a user's defined budget limits over specific periods.
-* Goal.java: Represents financial targets and tracks progress.
-* Category.java: Defines the classification system for transactions and budgets.
-* Notification.java: Represents system alerts (e.g., nearing a budget limit).
-* SessionManager.java: Singleton class that tracks the currently authenticated user session.
-* IPersistable.java: Interface defining save/update functionality for models.
+### Core Functionality
+- 📊 **Interactive Dashboard:** Get a real-time overview of your finances with visual summaries.
+- 💸 **Transaction Management:** Easily log, edit, and track incomes and expenses.
+- 🎯 **Budget Tracking:** Set custom limits for different spending categories and monitor your progress.
+- 🏆 **Goal Management:** Create financial goals and watch your progress automatically update as you save.
+- 🔔 **Smart Notifications:** Receive alerts when approaching or exceeding your budget limits.
 
-Persistence Layer (Database Access)
-* DatabaseManager.java: Handles the SQLite connection lifecycle, creates necessary tables, and provides core SQL execution utilities.
+### Advanced Features
+- 🔐 **User Authentication:** Secure local accounts with signup and login functionality.
+- 🎨 **Modern UI:** Sleek, dark-themed interface powered by FlatLaf for a premium experience.
+- 💾 **Local Persistence:** All data is safely stored offline in a lightweight SQLite database.
+- 📈 **Custom Reporting:** Generate and view detailed financial reports.
 
-Controller Layer (Logic linking Models & Views)
-* AuthController.java: Handles login and registration logic.
-* DashboardController.java: Aggregates data for the main overview dashboard.
-* TransactionController.java: Handles validation and processing of income/expenses.
-* BudgetController.java: Processes budget creation and checks for budget limit breaches.
-* GoalController.java: Manages goal updates based on financial activity.
-* ProfileController.java: Manages user preference and profile updates.
-* NotifController.java: Triggers and dismisses user notifications.
-* BaseController.java: Provides shared functionality across all controllers.
+---
 
-View Layer (UI/Screens)
-* MainFrame.java: The core JFrame application window that swaps out different view panels.
-* AuthView.java: The UI panel for user login and signup.
-* DashboardView.java: The main landing panel showing financial summaries.
-* TransactionView.java: The panel containing forms and tables for managing transactions.
-* BudgetView.java: The panel for setting and tracking budget limits.
-* GoalView.java: The panel for visual goal tracking.
-* ProfileView.java: The panel for editing user settings.
-* ReportsView.java: The panel for generating financial reports.
-* IDashboardView.java, ITransactionView.java, IBudgetView.java: Interfaces standardizing UI updates for their respective controllers.
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Java Development Kit (JDK) 17 or higher
+- Maven (for dependency management)
+- Git (optional)
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <project-directory>
+   ```
+
+2. **Build the project**
+   ```bash
+   mvn clean install
+   ```
+
+3. **Run the Application**
+   ```bash
+   mvn exec:java -Dexec.mainClass="com.budgetapp.view.MainFrame"
+   ```
+   *Alternatively, run `MainFrame.java` directly from your IDE.*
+
+---
+
+## 📁 Project Structure
+
+```text
+SWE - Budgeting App/
+├── src/main/java/com/budgetapp/
+│   ├── controller/          # Business logic & flow control
+│   │   ├── AuthController.java
+│   │   ├── BudgetController.java
+│   │   ├── DashboardController.java
+│   │   └── ...
+│   ├── model/               # Data structures & Entities
+│   │   ├── Budget.java
+│   │   ├── Category.java
+│   │   ├── Transaction.java
+│   │   ├── User.java
+│   │   └── ...
+│   ├── persistence/         # Database Access
+│   │   └── DatabaseManager.java
+│   └── view/                # UI Components (Java Swing)
+│       ├── MainFrame.java
+│       ├── DashboardView.java
+│       ├── TransactionView.java
+│       └── ...
+├── pom.xml                  # Maven dependencies & config
+├── budgetapp.db             # Generated SQLite database
+└── README.md                # Project documentation
+```
+
+---
+
+## 🧠 Architecture Details
+
+### 📂 `model/`
+Contains the core business objects.
+- `Transaction`, `Income`, `Expense`: Financial record models.
+- `User`, `SessionManager`: Handles user data and current session state.
+
+### 📂 `view/`
+The presentation layer built with Java Swing.
+- `MainFrame`: The primary window that orchestrates different panels.
+- `*View.java`: Individual screens like `DashboardView`, `BudgetView`, etc.
+
+### 📂 `controller/`
+Acts as the intermediary between the **Model** and **View**.
+- Processes user input, updates the database, and refreshes the UI.
+
+### 📂 `persistence/`
+- `DatabaseManager`: Initializes the database schema and handles raw SQLite queries.
+
+---
+
+## 🛠️ Built With
+
+- **[Java 17](https://jdk.java.net/17/)** - Core language
+- **[Maven](https://maven.apache.org/)** - Build and Dependency Management
+- **[SQLite JDBC](https://github.com/xerial/sqlite-jdbc)** - Database driver
+- **[FlatLaf](https://www.formdev.com/flatlaf/)** - Modern Swing Look and Feel
+- **[JDatePicker](https://github.com/JDatePicker/JDatePicker)** - Date selection UI components
+
+---
