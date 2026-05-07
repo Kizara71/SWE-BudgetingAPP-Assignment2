@@ -94,16 +94,7 @@ SWE - Budgeting App/
 ├── budgetapp.db             # Generated SQLite database
 ├── diagram.txt              # Project UML structural diagram
 ├── pom.xml                  # Maven dependencies & config
-├── README.md                # Project documentation
-├── Sequance Diagram 1.txt   # System sequence diagram 1
-├── Sequance Diagram 2.txt   # System sequence diagram 2
-├── Sequance Diagram 3.txt   # System sequence diagram 3
-├── Sequance Diagram 4.txt   # System sequence diagram 4
-├── Sequance Diagram 5.txt   # System sequence diagram 5
-├── Sequance Diagram 6.txt   # System sequence diagram 6
-├── Sequance Diagram 7.txt   # System sequence diagram 7
-├── Sequance Diagram 8.txt   # System sequence diagram 8
-└── State Diagram.txt        # Application state diagram
+└──README.md                # Project documentation
 ```
 
 ---
