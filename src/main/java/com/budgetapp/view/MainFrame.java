@@ -9,6 +9,8 @@ public class MainFrame extends JFrame {
     private TransactionView transactionPanel;
     private BudgetView budgetPanel;
     private GoalView goalPanel;
+    private ReportsView reportsPanel;
+    private ProfileView profilePanel;
     private JPanel rootPanel;
     private CardLayout rootCardLayout;
     private JPanel appContainer;
@@ -49,6 +51,8 @@ public class MainFrame extends JFrame {
         JButton btnTransaction = new JButton("Transactions");
         JButton btnBudget = new JButton("Budgets");
         JButton btnGoal = new JButton("Goals");
+        JButton btnReports = new JButton("Reports");
+        JButton btnProfile = new JButton("Profile");
         JButton btnLogout = new JButton("Logout");
 
         // Make buttons stretch
@@ -56,15 +60,21 @@ public class MainFrame extends JFrame {
         btnTransaction.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnBudget.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnGoal.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        btnReports.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        btnProfile.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnLogout.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         sidebar.add(btnDashboard);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
-        sidebar.add(btnTransaction);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         sidebar.add(btnBudget);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         sidebar.add(btnGoal);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidebar.add(btnReports);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidebar.add(btnTransaction);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidebar.add(btnProfile);
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(btnLogout);
 
@@ -76,11 +86,15 @@ public class MainFrame extends JFrame {
         transactionPanel = new TransactionView();
         budgetPanel = new BudgetView();
         goalPanel = new GoalView();
+        reportsPanel = new ReportsView();
+        profilePanel = new ProfileView();
 
         mainContentPanel.add(dashboardPanel, "Dashboard");
         mainContentPanel.add(transactionPanel, "Transaction");
         mainContentPanel.add(budgetPanel, "Budget");
         mainContentPanel.add(goalPanel, "Goal");
+        mainContentPanel.add(reportsPanel, "Reports");
+        mainContentPanel.add(profilePanel, "Profile");
 
         // Controller Wiring
         com.budgetapp.controller.DashboardController dashController = new com.budgetapp.controller.DashboardController(dashboardPanel);
@@ -92,13 +106,20 @@ public class MainFrame extends JFrame {
             b.setCategoryName(budgetPanel.getCategory());
             b.setBudgetAmount(budgetPanel.getAmount());
             b.setAlertThreshold(budgetPanel.getAlertThreshold());
+            b.setStartDate(budgetPanel.getStartDate());
+            b.setEndDate(budgetPanel.getEndDate());
             
             if (b.getBudgetAmount() <= 0) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid budget amount.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            budgetController.save(b);
+            budgetController.create(b);
+            if (budgetController.getErrorMSG() != null) {
+                JOptionPane.showMessageDialog(this, budgetController.getErrorMSG(), "Error", JOptionPane.ERROR_MESSAGE);
+                budgetController.clearError(); // reset
+                return;
+            }
             budgetPanel.clearFields();
             budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets());
             JOptionPane.showMessageDialog(this, "Budget Saved Successfully!");
@@ -184,6 +205,21 @@ public class MainFrame extends JFrame {
                 currentUser.updateBalance(t.getAmount(), t.isIncome());
             }
             
+            // Check for budget notifications
+            if (!t.isIncome()) {
+                for (com.budgetapp.model.Budget b : budgetController.getAllBudgets()) {
+                    if (b.getCategoryName().equalsIgnoreCase(t.getCategoryName())) {
+                        if (b.isOverLimit()) {
+                            JOptionPane.showMessageDialog(this, "ALERT: You have exceeded your budget for " + b.getCategoryName() + "!", "Budget Exceeded", JOptionPane.WARNING_MESSAGE);
+                            new com.budgetapp.controller.NotifController().send("Exceeded budget for " + b.getCategoryName(), "BUDGET_EXCEEDED", currentUser != null ? currentUser.getUserID() : 0);
+                        } else if (b.checkThresholds()) {
+                            JOptionPane.showMessageDialog(this, "WARNING: You are nearing your budget limit for " + b.getCategoryName() + ".", "Budget Warning", JOptionPane.WARNING_MESSAGE);
+                            new com.budgetapp.controller.NotifController().send("Nearing budget limit for " + b.getCategoryName(), "BUDGET_WARNING", currentUser != null ? currentUser.getUserID() : 0);
+                        }
+                    }
+                }
+            }
+            
             transactionPanel.clearFields();
             JOptionPane.showMessageDialog(this, "Transaction Saved!");
             
@@ -207,6 +243,14 @@ public class MainFrame extends JFrame {
         btnGoal.addActionListener(e -> {
             switchPanel("Goal");
             goalPanel.displayGoals(goalController.getAll());
+        });
+        btnReports.addActionListener(e -> {
+            switchPanel("Reports");
+            reportsPanel.updateView();
+        });
+        btnProfile.addActionListener(e -> {
+            switchPanel("Profile");
+            profilePanel.updateView();
         });
         
         btnLogout.addActionListener(e -> {

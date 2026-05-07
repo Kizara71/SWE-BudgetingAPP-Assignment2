@@ -20,11 +20,68 @@ public class BudgetController extends BaseController {
             b.save();
         }
     }
+    
+    public void create(Budget b) {
+        // Duplicate check as per Sequence Diagram 4
+        List<Budget> existing = getAllBudgets();
+        for (Budget existingBudget : existing) {
+            if (existingBudget.getCategoryName().equalsIgnoreCase(b.getCategoryName())) {
+                // If the month/year overlaps or is the same, it's a duplicate.
+                // Simple duplicate check on category for now.
+                handleError("Please edit the existing budget instead");
+                return;
+            }
+        }
+        save(b);
+    }
+    
+    public void edit(int id, Budget b) {
+        b.setBudgetID(id);
+        save(b);
+    }
 
     public void delete(int id) {
         Budget b = new Budget();
         b.load(id);
         b.delete();
+    }
+    
+    public double getBudget() {
+        List<Budget> budgets = getAllBudgets();
+        if (budgets.isEmpty()) return 0;
+        return budgets.get(0).getBudgetAmount();
+    }
+    
+    public double getRemaining() {
+        List<Budget> budgets = getAllBudgets();
+        if (budgets.isEmpty()) return 0;
+        return budgets.get(0).calcRemaining();
+    }
+    
+    public boolean checkStatus() {
+        List<Budget> budgets = getAllBudgets();
+        for (Budget b : budgets) {
+            if (b.checkThresholds() || b.isOverLimit()) return true;
+        }
+        return false;
+    }
+    
+    public void triggerAlert(int id) {
+        Budget b = new Budget();
+        b.load(id);
+        if (b.isOverLimit()) {
+            User user = SessionManager.getInstance().getCurrentUser();
+            new NotifController().send("Exceeded budget for " + b.getCategoryName(), "BUDGET_EXCEEDED", user != null ? user.getUserID() : 0);
+        }
+    }
+    
+    public void calcSpent(int id) {
+        Budget b = new Budget();
+        b.load(id);
+        TransactionController transController = new TransactionController();
+        double spent = transController.getExpenseByCategory(b.getCategoryName());
+        b.setSpentAmount(spent);
+        save(b);
     }
 
     public List<Budget> getAllBudgets() {

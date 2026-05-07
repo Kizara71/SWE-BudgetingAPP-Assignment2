@@ -35,10 +35,33 @@ public class GoalController extends BaseController {
         g.delete();
     }
     
-    public String getGoal() { return ""; }
-    public float getProgress() { return 0.0f; }
-    public boolean checkCompletion() { return false; }
-    public double calcMonthlySavings(double targetAmount, Date deadline, double currentAmount) { return 0.0; }
+    public String getGoal() { 
+        List<Goal> goals = getAll();
+        if (goals.isEmpty()) return "";
+        return goals.get(0).getGoalName(); 
+    }
+    
+    public float getProgress() { 
+        List<Goal> goals = getAll();
+        if (goals.isEmpty()) return 0.0f;
+        return (float) goals.get(0).calcProgress(); 
+    }
+    
+    public boolean checkCompletion() { 
+        List<Goal> goals = getAll();
+        for (Goal g : goals) {
+            if (g.isCompleted()) return true;
+        }
+        return false; 
+    }
+    
+    public double calcMonthlySavings(double targetAmount, Date deadline, double currentAmount) { 
+        if (deadline == null) return 0;
+        long diffInMillies = deadline.getTime() - System.currentTimeMillis();
+        long diffInMonths = diffInMillies / (1000L * 60 * 60 * 24 * 30);
+        if (diffInMonths <= 0) return targetAmount - currentAmount;
+        return (targetAmount - currentAmount) / diffInMonths; 
+    }
 
     public List<Goal> getAll() {
         List<Goal> list = new ArrayList<>();

@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor User as New User
+    participant MF as :MainFrame
+    participant AC as :AuthController
+    participant DB as :DatabaseManager
+
+    User->>MF: clicks "Sign Up"
+    MF-->>User: displays sign-up page
+    User->>MF: fills info & clicks "Create Account"
+    MF->>AC: Register(name, email, password)
+    
+    rect rgb(240, 240, 240)
+    Note over AC: Validation()
+    end
+
+    alt is Invalid (Exceptional Scenario)
+        AC-->>MF: bool (false)
+        MF-->>User: displays error message "Please enter valid information."
+    else is Valid (Normal Scenario)
+        AC->>DB: method(User)
+        DB-->>AC: type
+        rect rgb(240, 240, 240)
+        Note over AC: Login(email, password)
+        end
+        AC-->>MF: bool (true)
+        MF->>MF: switchPanel("DashboardView")
+        MF-->>User: redirects to main dashboard
+    end

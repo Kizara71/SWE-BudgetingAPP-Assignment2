@@ -1,0 +1,27 @@
+sequenceDiagram
+    actor User
+    participant UI as :GoalsUI
+    participant GC as :GoalController
+    participant DB as :GoalDB
+
+    User->>UI: navigates to "Goals" screen & clicks "+ Add"
+    UI-->>User: displays create goal screen
+    User->>UI: enters goalName, targetAmount, deadline
+    User->>UI: sets initialSavedAmount (optional)
+    User->>UI: clicks "Create Goal"
+    UI->>GC: createGoal(goalName, targetAmount, deadline, currentAmount)
+    GC->>GC: validateInput(goalName, targetAmount, deadline)
+    GC->>DB: saveGoal(goalName, targetAmount, deadline, currentAmount)
+    DB-->>GC: goalId : int
+    GC->>GC: calcMonthlySavings(targetAmount, deadline, currentAmount)
+    GC-->>UI: bool(true), goalData(goalId, monthlySavings)
+    UI-->>User: redirects to Goals screen with progress bar
+
+    Note over User,DB: [Later] User adds money to goal
+
+    User->>UI: addContribution(goalId, amount)
+    UI->>GC: updateGoal(goalId, amount : Decimal)
+    GC->>DB: updateSavedAmount(goalId, newAmount)
+    DB-->>GC: bool(true)
+    GC-->>UI: updatedProgress(currentAmount, status)
+    UI-->>User: updates goal progress bar & saved amount

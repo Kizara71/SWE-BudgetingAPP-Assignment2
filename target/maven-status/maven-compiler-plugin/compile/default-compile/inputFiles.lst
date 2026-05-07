@@ -4,6 +4,7 @@ D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\Budget
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\DashboardController.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\GoalController.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\NotifController.java
+D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\ProfileController.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\controller\TransactionController.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\model\Budget.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\model\Category.java
@@ -24,4 +25,6 @@ D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\IBudgetView.
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\IDashboardView.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\ITransactionView.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\MainFrame.java
+D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\ProfileView.java
+D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\ReportsView.java
 D:\AntiGravity\SWE - Budgeting App\src\main\java\com\budgetapp\view\TransactionView.java

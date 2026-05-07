@@ -65,15 +65,38 @@ public class GoalView extends JPanel {
             
             JProgressBar progress = new JProgressBar(0, 100);
             progress.setValue((int)g.calcProgress());
-            progress.setForeground(Color.decode("#10B981")); // Green for goal progress
-            progress.setBackground(Color.decode("#E5E7EB"));
+            progress.setForeground(Color.decode("#00a896"));
+            progress.setBackground(Color.decode("#0b192c"));
             
             JPanel infoPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-            infoPanel.setBackground(Color.WHITE);
+            infoPanel.setBackground(Color.decode("#142742"));
             infoPanel.add(nameLbl);
             infoPanel.add(statusLbl);
             
+            JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            actionPanel.setBackground(Color.decode("#142742"));
+            JButton btnContribute = new JButton("Contribute");
+            btnContribute.setBackground(Color.decode("#00a896"));
+            btnContribute.setForeground(Color.WHITE);
+            btnContribute.addActionListener(e -> {
+                String input = JOptionPane.showInputDialog("Enter amount to contribute:");
+                if(input != null && !input.trim().isEmpty()) {
+                    try {
+                        double amt = Double.parseDouble(input);
+                        g.addContribution(amt);
+                        com.budgetapp.controller.GoalController gc = new com.budgetapp.controller.GoalController();
+                        displayGoals(gc.getAll());
+                        
+                        // Show notification
+                        com.budgetapp.controller.NotifController nc = new com.budgetapp.controller.NotifController();
+                        nc.send("Contributed $" + amt + " to goal: " + g.getGoalName(), "GOAL", g.getUserID());
+                    } catch(Exception ex) {}
+                }
+            });
+            actionPanel.add(btnContribute);
+            
             card.add(infoPanel, BorderLayout.CENTER);
+            card.add(actionPanel, BorderLayout.EAST);
             card.add(progress, BorderLayout.SOUTH);
             
             card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));

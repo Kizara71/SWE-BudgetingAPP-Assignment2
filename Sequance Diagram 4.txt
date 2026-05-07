@@ -1,0 +1,27 @@
+create/edit budget
+
+sequenceDiagram
+    actor User
+    participant UI as Mobile App (UI)
+    participant BC as BudgetController
+    participant DB as DatabaseManager
+
+    User->>UI: Navigate to "Budgets" screen
+    UI-->>User: Display Budgets screen + "+ New" button
+    User->>UI: Click "+ New" button
+    UI-->>User: Display "Create Budget" screen
+    User->>UI: Select category, amount, period & alert threshold
+    User->>UI: Click "Create Budget"
+    UI->>BC: createBudget(b)
+    BC->>BC: validateInput()
+    BC->>DB: checkDuplicate(category, month)
+
+    alt [Duplicate budget exists]
+        BC-->>UI: HandleError(msg)
+        UI-->>User: Display error message: "Please edit the existing budget instead"
+    else [No duplicate found]
+        BC->>DB: method(type)
+        DB-->>BC: Success
+        DB-->>UI: Updated budget list
+        UI-->>User: Redirect to Budgets screen, new budget visible
+    end

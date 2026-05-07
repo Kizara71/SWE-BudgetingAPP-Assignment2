@@ -42,10 +42,46 @@ public class TransactionController extends BaseController {
         return list;
     }
 
-    public int get() { return 0; }
-    public void delete() {}
-    public List<Transaction> filterByCategory(String c) { return new ArrayList<>(); }
-    public List<Transaction> filterByDate(Date d) { return new ArrayList<>(); }
+    public int get() { return getAll().size(); }
+    
+    public void delete(int id) { 
+        Transaction t = new Transaction();
+        t.load(id);
+        t.delete();
+    }
+    
+    public List<Transaction> filterByCategory(String c) { 
+        List<Transaction> filtered = new ArrayList<>();
+        for (Transaction t : getAll()) {
+            if (c.equalsIgnoreCase(t.getCategoryName())) {
+                filtered.add(t);
+            }
+        }
+        return filtered;
+    }
+    
+    public List<Transaction> filterByDate(Date d) { 
+        // Sequence Diagram 7 mentions date range, but diagram.txt says Date d.
+        // We'll filter transactions that match the month/year of Date d or range if overloaded.
+        List<Transaction> filtered = new ArrayList<>();
+        if (d == null) return getAll();
+        for (Transaction t : getAll()) {
+            if (t.getDateTime() != null && t.getDateTime().getYear() == d.getYear() && t.getDateTime().getMonth() == d.getMonth()) {
+                filtered.add(t);
+            }
+        }
+        return filtered;
+    }
+    
+    public List<Transaction> filterByDateRange(Date start, Date end) {
+        List<Transaction> filtered = new ArrayList<>();
+        for (Transaction t : getAll()) {
+            if (t.getDateTime() != null && !t.getDateTime().before(start) && !t.getDateTime().after(end)) {
+                filtered.add(t);
+            }
+        }
+        return filtered;
+    }
     
     public double getIncome() { 
         double total = 0;

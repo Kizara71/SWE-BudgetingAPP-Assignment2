@@ -2,15 +2,36 @@ package com.budgetapp.view;
 
 import com.budgetapp.model.Budget;
 import javax.swing.*;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import org.jdatepicker.impl.*;
 
 public class BudgetView extends JPanel {
     private JComboBox<String> cmbCategory;
     private JTextField txtAmount;
     private JSpinner spinAlertThreshold;
+    private JDatePickerImpl startDatePicker;
+    private JDatePickerImpl endDatePicker;
     private JButton btnSaveBudget;
     private JPanel progressPanel;
+
+    class DateLabelFormatter extends AbstractFormatter {
+        private String datePattern = "yyyy-MM-dd";
+        private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+        @Override
+        public Object stringToValue(String text) throws ParseException { return dateFormatter.parseObject(text); }
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) { return dateFormatter.format(((Calendar) value).getTime()); }
+            return "";
+        }
+    }
 
     public interface BudgetActionListener {
         void onEdit(Budget b);
@@ -33,11 +54,12 @@ public class BudgetView extends JPanel {
         add(lblTitle, BorderLayout.NORTH);
 
         // Form Panel to add a budget
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createTitledBorder("Set New Budget Limit"));
 
         formPanel.add(new JLabel("Category:"));
         cmbCategory = new JComboBox<>(new String[] { "Food", "Transport", "Entertainment", "Utilities", "Other" });
+        cmbCategory.setEditable(true);
         formPanel.add(cmbCategory);
 
         formPanel.add(new JLabel("Budget Amount:"));
@@ -47,6 +69,19 @@ public class BudgetView extends JPanel {
         formPanel.add(new JLabel("Alert Threshold (%):"));
         spinAlertThreshold = new JSpinner(new SpinnerNumberModel(80, 1, 100, 5));
         formPanel.add(spinAlertThreshold);
+        
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+
+        formPanel.add(new JLabel("Start Date:"));
+        startDatePicker = new JDatePickerImpl(new JDatePanelImpl(new UtilDateModel(), p), new DateLabelFormatter());
+        formPanel.add(startDatePicker);
+
+        formPanel.add(new JLabel("End Date:"));
+        endDatePicker = new JDatePickerImpl(new JDatePanelImpl(new UtilDateModel(), p), new DateLabelFormatter());
+        formPanel.add(endDatePicker);
 
         btnSaveBudget = new JButton("Save Budget");
         formPanel.add(new JLabel(""));
@@ -139,9 +174,14 @@ public class BudgetView extends JPanel {
         return (Integer) spinAlertThreshold.getValue();
     }
 
+    public Date getStartDate() { return (Date) startDatePicker.getModel().getValue(); }
+    public Date getEndDate() { return (Date) endDatePicker.getModel().getValue(); }
+
     public void clearFields() {
         txtAmount.setText("");
         cmbCategory.setSelectedIndex(0);
         spinAlertThreshold.setValue(80);
+        startDatePicker.getModel().setValue(null);
+        endDatePicker.getModel().setValue(null);
     }
 }

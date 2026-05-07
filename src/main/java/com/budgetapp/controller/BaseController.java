@@ -9,4 +9,6 @@ public abstract class BaseController {
     public int getCurrentUserID() { return currentUserID; }
     public boolean checkAuth() { return isAuthenticated; }
     public void handleError(String msg) { this.errorMSG = msg; }
+    public String getErrorMSG() { return errorMSG; }
+    public void clearError() { this.errorMSG = null; }
 }

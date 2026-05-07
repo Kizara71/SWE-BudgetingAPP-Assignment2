@@ -35,7 +35,7 @@ public class TransactionView extends JPanel implements ITransactionView {
         setLayout(new GridBagLayout()); // Use GridBagLayout to center the card
         
         JPanel cardPanel = new JPanel(new BorderLayout(0, 20));
-        cardPanel.setPreferredSize(new Dimension(450, 400));
+        cardPanel.setPreferredSize(new Dimension(500, 480));
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1, true),
             BorderFactory.createEmptyBorder(30, 30, 30, 30)
@@ -58,6 +58,7 @@ public class TransactionView extends JPanel implements ITransactionView {
 
         formPanel.add(new JLabel("Category:"));
         cmbCategory = new JComboBox<>(new String[]{"Food", "Transport", "Utilities", "Salary", "Entertainment", "Other"});
+        cmbCategory.setEditable(true);
         formPanel.add(cmbCategory);
 
         formPanel.add(new JLabel("Description:"));
