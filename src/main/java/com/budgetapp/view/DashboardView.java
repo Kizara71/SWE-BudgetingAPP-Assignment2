@@ -20,9 +20,9 @@ public class DashboardView extends JPanel implements IDashboardView {
         // Top panel for balance (Card style)
         JPanel balanceCard = new JPanel();
         balanceCard.setLayout(new BoxLayout(balanceCard, BoxLayout.Y_AXIS));
-        balanceCard.setBackground(Color.decode("#3b82f6")); // primary blue
+        balanceCard.setBackground(Color.decode("#3B82F6")); // primary blue
         balanceCard.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.decode("#2563eb"), 1, true),
+            BorderFactory.createLineBorder(Color.decode("#3B82F6"), 1, true),
             BorderFactory.createEmptyBorder(25, 25, 25, 25)
         ));
 

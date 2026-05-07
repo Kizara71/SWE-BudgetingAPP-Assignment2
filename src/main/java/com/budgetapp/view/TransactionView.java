@@ -77,7 +77,7 @@ public class TransactionView extends JPanel implements ITransactionView {
         formPanel.add(new JLabel("")); // spacer
         btnSave = new JButton("Save Transaction");
         btnSave.putClientProperty("JButton.buttonType", "roundRect");
-        btnSave.setBackground(Color.decode("#3b82f6"));
+        btnSave.setBackground(Color.decode("#3B82F6"));
         btnSave.setForeground(Color.WHITE);
         btnSave.setFont(new Font("Inter", Font.BOLD, 14));
         formPanel.add(btnSave);

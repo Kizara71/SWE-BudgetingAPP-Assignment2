@@ -8,6 +8,7 @@ public class MainFrame extends JFrame {
     private DashboardView dashboardPanel;
     private TransactionView transactionPanel;
     private BudgetView budgetPanel;
+    private GoalView goalPanel;
     private JPanel rootPanel;
     private CardLayout rootCardLayout;
     private JPanel appContainer;
@@ -47,12 +48,14 @@ public class MainFrame extends JFrame {
         JButton btnDashboard = new JButton("Dashboard");
         JButton btnTransaction = new JButton("Transactions");
         JButton btnBudget = new JButton("Budgets");
+        JButton btnGoal = new JButton("Goals");
         JButton btnLogout = new JButton("Logout");
 
         // Make buttons stretch
         btnDashboard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnTransaction.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnBudget.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        btnGoal.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         btnLogout.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         sidebar.add(btnDashboard);
@@ -60,6 +63,8 @@ public class MainFrame extends JFrame {
         sidebar.add(btnTransaction);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
         sidebar.add(btnBudget);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+        sidebar.add(btnGoal);
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(btnLogout);
 
@@ -70,10 +75,12 @@ public class MainFrame extends JFrame {
         dashboardPanel = new DashboardView();
         transactionPanel = new TransactionView();
         budgetPanel = new BudgetView();
+        goalPanel = new GoalView();
 
         mainContentPanel.add(dashboardPanel, "Dashboard");
         mainContentPanel.add(transactionPanel, "Transaction");
         mainContentPanel.add(budgetPanel, "Budget");
+        mainContentPanel.add(goalPanel, "Goal");
 
         // Controller Wiring
         com.budgetapp.controller.DashboardController dashController = new com.budgetapp.controller.DashboardController(dashboardPanel);
@@ -142,6 +149,21 @@ public class MainFrame extends JFrame {
             }
         });
 
+        // Setup Goal Controller and Panel Wiring
+        com.budgetapp.controller.GoalController goalController = new com.budgetapp.controller.GoalController();
+        goalPanel.addGoalListener(e -> {
+            com.budgetapp.model.Goal newGoal = new com.budgetapp.model.Goal();
+            newGoal.setGoalName(JOptionPane.showInputDialog(this, "Enter Goal Name:"));
+            if(newGoal.getGoalName() == null || newGoal.getGoalName().trim().isEmpty()) return;
+            try {
+                newGoal.setTargetAmount(Double.parseDouble(JOptionPane.showInputDialog(this, "Enter Target Amount:")));
+            } catch (Exception ex) { return; }
+            newGoal.setCurrentAmount(0);
+            
+            goalController.create(newGoal);
+            goalPanel.displayGoals(goalController.getAll());
+        });
+
         transactionPanel.addSaveListener(e -> {
             com.budgetapp.model.Transaction t = new com.budgetapp.model.Transaction();
             // Set the logged in user ID to the transaction
@@ -182,6 +204,10 @@ public class MainFrame extends JFrame {
             switchPanel("Budget"); 
             budgetPanel.updateBudgetsDisplay(budgetController.getAllBudgets()); 
         });
+        btnGoal.addActionListener(e -> {
+            switchPanel("Goal");
+            goalPanel.displayGoals(goalController.getAll());
+        });
         
         btnLogout.addActionListener(e -> {
             new com.budgetapp.controller.AuthController().logout();
@@ -212,13 +238,26 @@ public class MainFrame extends JFrame {
     
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
             // Global font update
             UIManager.put("defaultFont", new Font("Inter", Font.PLAIN, 14));
-            UIManager.put("Button.arc", 10);
-            UIManager.put("Component.arc", 10);
-            UIManager.put("ProgressBar.arc", 10);
-            UIManager.put("TextComponent.arc", 10);
+            // High arc for mobile-like rounded corners
+            UIManager.put("Button.arc", 20);
+            UIManager.put("Component.arc", 20);
+            UIManager.put("ProgressBar.arc", 20);
+            UIManager.put("TextComponent.arc", 20);
+            
+            // Light theme global overrides
+            UIManager.put("Panel.background", Color.decode("#F3F4F6")); // Light gray app background
+            UIManager.put("Window.background", Color.decode("#F3F4F6"));
+            UIManager.put("Button.background", Color.decode("#3B82F6")); // Blue primary button
+            UIManager.put("Button.foreground", Color.WHITE);
+            UIManager.put("Component.focusColor", Color.decode("#3B82F6"));
+            UIManager.put("Component.borderColor", Color.decode("#D1D5DB")); // Light gray border
+            UIManager.put("TabbedPane.selectedBackground", Color.WHITE);
+            
+            // Sidebar buttons to look more like nav items
+            UIManager.put("Button.margin", new Insets(10, 15, 10, 15));
         } catch(Exception ex) {
             System.err.println("Failed to initialize LaF");
         }

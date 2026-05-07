@@ -21,9 +21,11 @@ public class AuthView extends JPanel {
     public AuthView() {
         authController = new AuthController();
         setLayout(new BorderLayout());
+        setBackground(Color.decode("#1A233A"));
 
         cardLayout = new CardLayout();
         cardsPanel = new JPanel(cardLayout);
+        cardsPanel.setBackground(Color.decode("#1A233A"));
         
         cardsPanel.add(createLoginPanel(), "Login");
         cardsPanel.add(createRegisterPanel(), "Register");
@@ -38,21 +40,28 @@ public class AuthView extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        panel.setBackground(Color.decode("#1A233A"));
         JLabel title = new JLabel("Login", SwingConstants.CENTER);
+        title.setForeground(Color.WHITE);
         title.setFont(new Font("Inter", Font.BOLD, 28));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         panel.add(title, gbc);
 
         gbc.gridwidth = 1;
-        gbc.gridy = 1; panel.add(new JLabel("Email:"), gbc);
+        JLabel lblEmail = new JLabel("Email:");
+        lblEmail.setForeground(Color.WHITE);
+        gbc.gridy = 1; panel.add(lblEmail, gbc);
         gbc.gridx = 1; loginEmailField = new JTextField(15); panel.add(loginEmailField, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2; 
+        JLabel lblPassword = new JLabel("Password:");
+        lblPassword.setForeground(Color.WHITE);
+        panel.add(lblPassword, gbc);
         gbc.gridx = 1; loginPasswordField = new JPasswordField(15); panel.add(loginPasswordField, gbc);
 
-        JButton loginBtn = new JButton("Login");
+        JButton loginBtn = new JButton("Log In");
         loginBtn.putClientProperty("JButton.buttonType", "roundRect");
-        loginBtn.setBackground(Color.decode("#3b82f6"));
+        loginBtn.setBackground(Color.decode("#3B82F6"));
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFont(new Font("Inter", Font.BOLD, 14));
         loginBtn.addActionListener(e -> {
@@ -65,9 +74,9 @@ public class AuthView extends JPanel {
             }
         });
         
-        JButton goToRegBtn = new JButton("Don't have an account? Register");
+        JButton goToRegBtn = new JButton("Don't have an account? Sign Up");
         goToRegBtn.putClientProperty("JButton.buttonType", "borderless");
-        goToRegBtn.setForeground(Color.decode("#94a3b8"));
+        goToRegBtn.setForeground(Color.decode("#94A3B8"));
         goToRegBtn.addActionListener(e -> cardLayout.show(cardsPanel, "Register"));
 
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
@@ -85,24 +94,34 @@ public class AuthView extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        panel.setBackground(Color.decode("#1A233A"));
         JLabel title = new JLabel("Create Account", SwingConstants.CENTER);
+        title.setForeground(Color.WHITE);
         title.setFont(new Font("Inter", Font.BOLD, 28));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         panel.add(title, gbc);
 
         gbc.gridwidth = 1;
-        gbc.gridy = 1; panel.add(new JLabel("Name:"), gbc);
+        JLabel lblRegName = new JLabel("Full Name:");
+        lblRegName.setForeground(Color.WHITE);
+        gbc.gridy = 1; panel.add(lblRegName, gbc);
         gbc.gridx = 1; regNameField = new JTextField(15); panel.add(regNameField, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2; 
+        JLabel lblRegEmail = new JLabel("Email:");
+        lblRegEmail.setForeground(Color.WHITE);
+        panel.add(lblRegEmail, gbc);
         gbc.gridx = 1; regEmailField = new JTextField(15); panel.add(regEmailField, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3; panel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 3; 
+        JLabel lblRegPass = new JLabel("Password:");
+        lblRegPass.setForeground(Color.WHITE);
+        panel.add(lblRegPass, gbc);
         gbc.gridx = 1; regPasswordField = new JPasswordField(15); panel.add(regPasswordField, gbc);
 
-        JButton regBtn = new JButton("Register");
+        JButton regBtn = new JButton("Create Account");
         regBtn.putClientProperty("JButton.buttonType", "roundRect");
-        regBtn.setBackground(Color.decode("#10b981")); // green for register
+        regBtn.setBackground(Color.decode("#10B981")); // green for create account as per mockup
         regBtn.setForeground(Color.WHITE);
         regBtn.setFont(new Font("Inter", Font.BOLD, 14));
         regBtn.addActionListener(e -> {
@@ -121,9 +140,9 @@ public class AuthView extends JPanel {
             }
         });
 
-        JButton goToLoginBtn = new JButton("Already have an account? Login");
+        JButton goToLoginBtn = new JButton("Already have an account? Log In");
         goToLoginBtn.putClientProperty("JButton.buttonType", "borderless");
-        goToLoginBtn.setForeground(Color.decode("#94a3b8"));
+        goToLoginBtn.setForeground(Color.decode("#94A3B8"));
         goToLoginBtn.addActionListener(e -> cardLayout.show(cardsPanel, "Login"));
 
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;

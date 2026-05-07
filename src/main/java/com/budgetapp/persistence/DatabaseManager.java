@@ -67,10 +67,33 @@ public class DatabaseManager {
                 "FOREIGN KEY(userId) REFERENCES users(id)" +
                 ");";
 
+        String createGoalTable = "CREATE TABLE IF NOT EXISTS goals (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "userId INTEGER," +
+                "goalName TEXT," +
+                "targetAmount REAL," +
+                "currentAmount REAL," +
+                "deadline INTEGER," +
+                "status TEXT," +
+                "FOREIGN KEY(userId) REFERENCES users(id)" +
+                ");";
+
+        String createNotifTable = "CREATE TABLE IF NOT EXISTS notifications (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "userId INTEGER," +
+                "type TEXT," +
+                "message TEXT," +
+                "isRead INTEGER," +
+                "timestamp INTEGER," +
+                "FOREIGN KEY(userId) REFERENCES users(id)" +
+                ");";
+
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createUserTable);
             stmt.execute(createTransactionTable);
             stmt.execute(createBudgetTable);
+            stmt.execute(createGoalTable);
+            stmt.execute(createNotifTable);
         } catch (SQLException e) {
             System.err.println("Failed to initialize tables: " + e.getMessage());
         }

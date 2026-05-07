@@ -11,12 +11,13 @@ public class BudgetView extends JPanel {
     private JSpinner spinAlertThreshold;
     private JButton btnSaveBudget;
     private JPanel progressPanel;
-    
+
     public interface BudgetActionListener {
         void onEdit(Budget b);
+
         void onDelete(Budget b);
     }
-    
+
     private BudgetActionListener actionListener;
 
     public void setBudgetActionListener(BudgetActionListener listener) {
@@ -36,7 +37,7 @@ public class BudgetView extends JPanel {
         formPanel.setBorder(BorderFactory.createTitledBorder("Set New Budget Limit"));
 
         formPanel.add(new JLabel("Category:"));
-        cmbCategory = new JComboBox<>(new String[]{"Food", "Transport", "Entertainment", "Utilities", "Other"});
+        cmbCategory = new JComboBox<>(new String[] { "Food", "Transport", "Entertainment", "Utilities", "Other" });
         formPanel.add(cmbCategory);
 
         formPanel.add(new JLabel("Budget Amount:"));
@@ -54,7 +55,7 @@ public class BudgetView extends JPanel {
         // Progress Panel to display budgets
         progressPanel = new JPanel();
         progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.Y_AXIS));
-        
+
         JScrollPane scrollPane = new JScrollPane(progressPanel);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Your Budgets"));
 
@@ -70,8 +71,9 @@ public class BudgetView extends JPanel {
         for (Budget b : budgets) {
             JPanel itemPanel = new JPanel(new BorderLayout(5, 5));
             itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            
-            String labelText = String.format("%s: $%.2f / $%.2f", b.getCategoryName(), b.getSpentAmount(), b.getBudgetAmount());
+
+            String labelText = String.format("%s: $%.2f / $%.2f", b.getCategoryName(), b.getSpentAmount(),
+                    b.getBudgetAmount());
             JLabel lblDetails = new JLabel(labelText);
             itemPanel.add(lblDetails, BorderLayout.NORTH);
 
@@ -79,35 +81,36 @@ public class BudgetView extends JPanel {
             int percentage = (int) b.calcSpentPercentage();
             progressBar.setValue(Math.min(percentage, 100));
             progressBar.setStringPainted(true);
-            
+
             if (b.isOverLimit()) {
                 progressBar.setForeground(Color.RED);
                 lblDetails.setText(labelText + " (OVER LIMIT)");
                 lblDetails.setForeground(Color.RED);
             } else if (b.checkThresholds()) {
-                progressBar.setForeground(Color.ORANGE);
+                progressBar.setForeground(Color.decode("#fca311"));
                 lblDetails.setText(labelText + " (WARNING)");
-                lblDetails.setForeground(Color.ORANGE);
+                lblDetails.setForeground(Color.decode("#fca311"));
             } else {
-                progressBar.setForeground(new Color(0, 150, 0)); // Green
+                progressBar.setForeground(Color.decode("#3B82F6")); // Primary Blue
             }
-            
-            
+
             JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             JButton btnEdit = new JButton("Edit");
             JButton btnDelete = new JButton("Delete");
-            
+
             btnEdit.addActionListener(e -> {
-                if (actionListener != null) actionListener.onEdit(b);
+                if (actionListener != null)
+                    actionListener.onEdit(b);
             });
-            
+
             btnDelete.addActionListener(e -> {
-                if (actionListener != null) actionListener.onDelete(b);
+                if (actionListener != null)
+                    actionListener.onDelete(b);
             });
-            
+
             actionPanel.add(btnEdit);
             actionPanel.add(btnDelete);
-            
+
             itemPanel.add(progressBar, BorderLayout.CENTER);
             itemPanel.add(actionPanel, BorderLayout.SOUTH);
             progressPanel.add(itemPanel);
@@ -120,15 +123,21 @@ public class BudgetView extends JPanel {
         btnSaveBudget.addActionListener(l);
     }
 
-    public String getCategory() { return (String) cmbCategory.getSelectedItem(); }
-    public double getAmount() { 
+    public String getCategory() {
+        return (String) cmbCategory.getSelectedItem();
+    }
+
+    public double getAmount() {
         try {
             return Double.parseDouble(txtAmount.getText());
         } catch (NumberFormatException e) {
             return 0;
         }
     }
-    public int getAlertThreshold() { return (Integer) spinAlertThreshold.getValue(); }
+
+    public int getAlertThreshold() {
+        return (Integer) spinAlertThreshold.getValue();
+    }
 
     public void clearFields() {
         txtAmount.setText("");
